@@ -1,0 +1,17 @@
+{
+  "activate": [
+    "check proofreferral opportunity 3",
+    "refer this candidate for the funded proofreferral opportunity",
+    "submit my merged PR to proofreferral",
+    "has the proofreferral candidate actually been paid?",
+    "the proofreferral judgment is inconclusive, what can the candidate do?",
+    "settle this finalized proofreferral outcome"
+  ],
+  "doNotActivate": [
+    "transfer GEN to this wallet",
+    "review this random GitHub pull request",
+    "write a job description",
+    "what is an MCP server?",
+    "check my unrelated employment application"
+  ]
+}
