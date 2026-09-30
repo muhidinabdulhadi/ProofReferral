@@ -1,0 +1,31 @@
+name: ProofReferral integrations
+
+on:
+  workflow_dispatch:
+  push:
+    paths: ["integrations/**", ".agents/skills/proofreferral/**", "docs/integrations/**", ".github/workflows/proofreferral-integrations.yml"]
+  pull_request:
+    paths: ["integrations/**", ".agents/skills/proofreferral/**", "docs/integrations/**", ".github/workflows/proofreferral-integrations.yml"]
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: npm }
+      - run: npm ci
+      - run: npm run typecheck --workspace @proofreferral/sdk
+      - run: npm run test --workspace @proofreferral/sdk
+      - run: npm run build --workspace @proofreferral/sdk
+      - run: npm run typecheck --workspace @proofreferral/mcp
+      - run: npm run test --workspace @proofreferral/mcp
+      - run: npm run build --workspace @proofreferral/mcp
+      - run: npm run stdio:e2e --workspace @proofreferral/mcp
+      - run: npm pack --dry-run --workspace @proofreferral/sdk
+      - run: npm pack --dry-run --workspace @proofreferral/mcp
+      - run: node scripts/validate_proofreferral_skill.mjs
+      - run: git diff --exit-code -- contracts frontend deploy deployment
+      - name: Secret scan
+        shell: bash
+        run: '! rg -n "0x[a-fA-F0-9]{64}" integrations .agents/skills/proofreferral --glob "!*.example" -g "!dist/**"'
